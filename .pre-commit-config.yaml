@@ -1,0 +1,22 @@
+repos:
+  # Gitleaks — профессиональный поиск секретов
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.24.2
+    hooks:
+      - id: gitleaks
+        name: Gitleaks (secrets detection)
+
+  # Твои локальные хуки (оставляем как есть)
+  - repo: local
+    hooks:
+      - id: detect-secrets
+        name: Detect hardcoded secrets (grep)
+        entry: bash -c 'grep -nE "api_key|token|secret|password" app.py && exit 1 || exit 0'
+        language: system
+        files: app.py
+
+      - id: detect-sql-injection
+        name: Detect SQL injection patterns
+        entry: bash -c 'grep -nE "SELECT.*\+\s*\$|WHERE.*=.*\+" app.py && exit 1 || exit 0'
+        language: system
+        files: app.py
