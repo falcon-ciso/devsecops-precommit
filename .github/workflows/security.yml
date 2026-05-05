@@ -1,0 +1,27 @@
+name: Security scan
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  security-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for secrets
+        run: |
+          if grep -nE "api_key|token|secret|password" app.py; then
+            echo "❌ Hardcoded secret found!"
+            exit 1
+          fi
+
+      - name: Check for SQL injection
+        run: |
+          if grep -nE "SELECT.*\+\s*\$|WHERE.*=.*\+" app.py; then
+            echo "❌ Potential SQL injection found!"
+            exit 1
+          fi
