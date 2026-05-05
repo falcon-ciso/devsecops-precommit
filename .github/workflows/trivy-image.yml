@@ -1,0 +1,19 @@
+name: Trivy Image Scan
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  scan-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Scan python:3.7-slim
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'python:3.7-slim'
+          format: 'table'
+          exit-code: '1'
+          severity: 'HIGH,CRITICAL'
